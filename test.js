@@ -1,14 +1,20 @@
 
+//var arrowFunction = () => 1
+
+//function func1(a, b) {
+//}
+
 function add(a, b) {
-	var c;
+	let c = 2, e = a + b - 1;
 	var d = 2;
 	if (!c && (a < 1) && (a > 2) || b < 1) {
 		c = b * b
 	}
-	c = a + b;
+	c = 1 + 1;
+	c = a + b * d;
 	return c;
 }
-
-function plus(a, b) {
-	return a + b;
-}
+//
+//function plus(a, b) {
+//	return a + b;
+//}
