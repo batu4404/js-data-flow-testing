@@ -16,7 +16,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
  
@@ -39,6 +41,7 @@ public class Controller implements Initializable {
 	
 	private File inputFile;
 	private ObservableList<String> listFunctionData;
+	private TextArea textAreaSource;
    
 	@FXML
 	private Label inputFileNameLabel;
@@ -51,6 +54,9 @@ public class Controller implements Initializable {
 	
 	@FXML
 	private ListView listFunction;
+	
+	@FXML
+	private AnchorPane sourceOrCfgPane;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -70,7 +76,11 @@ public class Controller implements Initializable {
 	}
 	
 	public void setSourceOnTextView() {
-		
+		textAreaSource = new TextArea();
+		textAreaSource.setText("function foo(){"
+				+ "console.log();"
+				+ "}");
+		sourceOrCfgPane.getChildren().add(textAreaSource);
 	}
    
 	public void openFile(ActionEvent event) {
@@ -83,20 +93,18 @@ public class Controller implements Initializable {
 			inputFile = file;
 			inputFileNameLabel.setText(file.getName());
 			setListFunction(null);
+			setSourceOnTextView();
 			System.out.println(file);
 		} else {
 			System.out.println("No file choosen!");
 		}
 	}
  
-	   // When user click on myButton
-	   // this method will be called.
 	   // Khi người dùng nhấn vào Button myButton
 	   // phương thức này sẽ được gọi
 	   public void showResult(ActionEvent event) {
 	       System.out.println("Show result clicked!");
 	       System.out.println("Target: " + choiceBoxTarget.getSelectionModel().getSelectedItem());
-	      
 	   }
   
 }

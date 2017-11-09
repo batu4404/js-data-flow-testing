@@ -28,7 +28,7 @@
       <Button layoutX="459.0" layoutY="389.0" mnemonicParsing="false" text="Thực hiện" onAction="#showResult"/>
       <ListView layoutX="255.0" layoutY="435.0" prefHeight="322.0" prefWidth="1068.0" />
       <ChoiceBox fx:id="choiceBoxSource" layoutX="252.0" layoutY="33.0" prefWidth="150.0" />
-      <AnchorPane layoutX="252.0" layoutY="74.0" prefHeight="274.0" prefWidth="1084.0" />
+      <AnchorPane fx:id="sourceOrCfgPane" layoutX="252.0" layoutY="74.0" prefHeight="274.0" prefWidth="1084.0" />
       <ListView fx:id="listFunction" layoutX="14.0" layoutY="68.0" prefHeight="697.0" prefWidth="200.0" />
       <Label fx:id="inputFileNameLabel" layoutX="13.0" layoutY="38.0" prefHeight="25.0" prefWidth="200.0" text="No File Choosen" />
    </children>
