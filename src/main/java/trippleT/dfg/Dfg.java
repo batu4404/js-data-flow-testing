@@ -4,6 +4,15 @@ public class Dfg implements IDfg {
 	private BeginNode begin;
 	private EndNode end;
 	
+	public Dfg(SubDfg subDfg) {
+		if (subDfg.getBegin() != null) {
+			begin = new BeginNode();
+			begin.next = subDfg.getBegin();
+			end = new EndNode();
+			subDfg.getEnd().setNext(end);
+		}
+	}
+	
 	/**
 	 * @return the begin
 	 */

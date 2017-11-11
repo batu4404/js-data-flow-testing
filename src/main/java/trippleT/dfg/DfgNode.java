@@ -18,7 +18,7 @@ public abstract class DfgNode {
 	}
 	
 	public DfgNode(AstNode astNode) {
-		
+		this.astNode = astNode;
 	}
 	
 	public DfgNode(AstNode astNode, DfgNode next, DfgNode previous) {

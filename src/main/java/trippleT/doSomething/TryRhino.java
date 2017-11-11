@@ -3,9 +3,7 @@ package trippleT.doSomething;
 import java.io.FileReader;
 import java.util.List;
 
-import org.mozilla.javascript.Token;
 import org.mozilla.javascript.CompilerEnvirons;
-import org.mozilla.javascript.IRFactory;
 import org.mozilla.javascript.Node;
 import org.mozilla.javascript.Parser;
 import org.mozilla.javascript.ast.Assignment;
@@ -76,9 +74,13 @@ public class TryRhino {
 			visitFunction((FunctionNode) node);
 		} else if (node instanceof IfStatement) {
 			IfStatement ifStatement = (IfStatement) node;
+			AstNode thenBranch = ifStatement.getThenPart();
+			AstNode elseBranch = ifStatement.getElsePart();
 			AstNode condition = ((IfStatement) node).getCondition();
 			System.out.println("condition: " + condition.toSource());
 			visitCondition(condition);
+			System.out.println("then: " + thenBranch.getClass());
+			System.out.println("else: " + elseBranch);
 		} else if (node instanceof Block) {
 			Block block = (Block) node;
 			if (block.hasChildren()) {
