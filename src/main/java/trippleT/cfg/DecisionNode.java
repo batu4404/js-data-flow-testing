@@ -1,9 +1,9 @@
-package trippleT.dfg;
+package trippleT.cfg;
 
 import org.mozilla.javascript.ast.AstNode;
 
-public class DecisionNode extends DfgNode {
-	protected DfgNode falseBranch;
+public class DecisionNode extends CfgNode {
+	protected CfgNode falseBranch;
 	// trueBranch is next
 	protected MergeNode mergeNode;
 	
@@ -15,6 +15,10 @@ public class DecisionNode extends DfgNode {
 		super(astNode);
 	}
 	
+	public DecisionNode(AstNode astNode, int index) {
+		super(astNode, index);
+	}
+	
 	public AstNode getCondition() {
 		return astNode;
 	}
@@ -22,28 +26,28 @@ public class DecisionNode extends DfgNode {
 	/**
 	 * @return the trueBranch
 	 */
-	public DfgNode getTrueBranch() {
+	public CfgNode getTrueBranch() {
 		return next;
 	}
 
 	/**
 	 * @param falseBranch the trueBranch to set
 	 */
-	public void setTrueBranch(DfgNode trueBranch) {
+	public void setTrueBranch(CfgNode trueBranch) {
 		next = trueBranch;
 	}
 
 	/**
 	 * @return the falseBranch
 	 */
-	public DfgNode getFalseBranch() {
+	public CfgNode getFalseBranch() {
 		return falseBranch;
 	}
 
 	/**
 	 * @param falseBranch the falseBranch to set
 	 */
-	public void setFalseBranch(DfgNode falseBranch) {
+	public void setFalseBranch(CfgNode falseBranch) {
 		this.falseBranch = falseBranch;
 	}
 
@@ -62,7 +66,7 @@ public class DecisionNode extends DfgNode {
 	}
 	
 	@Override
-	public DfgNode getNext() {
+	public CfgNode getNext() {
 		return mergeNode;
 	}
 	

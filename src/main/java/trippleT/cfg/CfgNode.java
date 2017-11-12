@@ -1,27 +1,32 @@
-package trippleT.dfg;
+package trippleT.cfg;
 
 import java.util.ArrayList;
 
 import org.mozilla.javascript.ast.AstNode;
 
-public abstract class DfgNode {
+public abstract class CfgNode {
 	protected int index = -1;
 	protected ArrayList<String> defs;
 	protected ArrayList<String> cUses;
 	protected ArrayList<String> pUse;
-	protected DfgNode next;
-	protected DfgNode previous;
+	protected CfgNode next;
+	protected CfgNode previous;
 	protected AstNode astNode;
 	
-	public DfgNode() {
+	public CfgNode() {
 		
 	}
 	
-	public DfgNode(AstNode astNode) {
+	public CfgNode(AstNode astNode) {
 		this.astNode = astNode;
 	}
 	
-	public DfgNode(AstNode astNode, DfgNode next, DfgNode previous) {
+	public CfgNode(AstNode astNode, int index) {
+		this.astNode = astNode;
+		this.index = index;
+	}
+	
+	public CfgNode(AstNode astNode, CfgNode next, CfgNode previous) {
 		this.astNode = astNode;
 		this.next = next;
 		this.previous = previous;
@@ -78,25 +83,25 @@ public abstract class DfgNode {
 	/**
 	 * @return the next
 	 */
-	public DfgNode getNext() {
+	public CfgNode getNext() {
 		return next;
 	}
 	/**
 	 * @param next the next to set
 	 */
-	public void setNext(DfgNode next) {
+	public void setNext(CfgNode next) {
 		this.next = next;
 	}
 	/**
 	 * @return the previous
 	 */
-	public DfgNode getPrevious() {
+	public CfgNode getPrevious() {
 		return previous;
 	}
 	/**
 	 * @param previous the previous to set
 	 */
-	public void setPrevious(DfgNode previous) {
+	public void setPrevious(CfgNode previous) {
 		this.previous = previous;
 	}
 	/**

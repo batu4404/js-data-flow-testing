@@ -1,4 +1,4 @@
-package trippleT.dfg;
+package trippleT.cfg;
 
 import java.util.List;
 
@@ -19,42 +19,42 @@ import org.mozilla.javascript.ast.UnaryExpression;
 import org.mozilla.javascript.ast.VariableDeclaration;
 import org.mozilla.javascript.ast.VariableInitializer;
 
-public class DfgBuilder {
+public class CfgBuilder {
 	private int index = 0;
 	
-	public Dfg buildDfg(FunctionNode function) {
+	public Cfg buildCfg(FunctionNode function) {
 		AstNode body = function.getBody();
-		SubDfg subDfg = buildSubDfg(body);
-		subDfg.print();
-		Dfg dfg = new Dfg(subDfg);
-		return dfg;
+		index = 0;
+		SubCfg subCfg = buildSubCfg(body);
+		Cfg cfg = new Cfg(subCfg);
+		return cfg;
 	}
 	
-	public SubDfg buildSubDfg(AstNode node) {
+	public SubCfg buildSubCfg(AstNode node) {
 		if (node instanceof VariableDeclaration) {
-			return buildVariableDeclarationSubDfg((VariableDeclaration) node);
+			return buildVariableDeclarationSubCfg((VariableDeclaration) node);
 		} else if (node instanceof VariableInitializer) {
-			return buildVariableInitializerSubDfg((VariableInitializer) node);
+			return buildVariableInitializerSubCfg((VariableInitializer) node);
 		} else if (node instanceof ExpressionStatement) {
-			return buildExpressionSubDfg((ExpressionStatement) node);
+			return buildExpressionSubCfg((ExpressionStatement) node);
 		} else if (node instanceof Block) {
-			return buildBlockSubDfg((Block) node);
+			return buildBlockSubCfg((Block) node);
 		} else if (node instanceof IfStatement) {
-			return buildIfSubDfg((IfStatement) node);
+			return buildIfSubCfg((IfStatement) node);
 		} else if (node instanceof ForLoop) {
-			return buildForLoopSubDfg((ForLoop) node);
+			return buildForLoopSubCfg((ForLoop) node);
 		} else if (node instanceof Scope) {
-			return buildScopeSubDfg((Scope) node);
+			return buildScopeSubCfg((Scope) node);
 		} else if (node instanceof ReturnStatement) {
-			return buildReturnSubDfg((ReturnStatement) node);
+			return buildReturnSubCfg((ReturnStatement) node);
 		} else if (node instanceof UnaryExpression) {
-			return buildUnarySubDfg((UnaryExpression) node);
+			return buildUnarySubCfg((UnaryExpression) node);
 		}
 		
-		return new SubDfg();
+		return new SubCfg();
 	}
 	
-	public SubDfg buildUnarySubDfg(UnaryExpression unary) {
+	public SubCfg buildUnarySubCfg(UnaryExpression unary) {
 		int operator = unary.getOperator();
 		NumberLiteral delta = new NumberLiteral();
 		delta.setValue("1");
@@ -69,120 +69,120 @@ public class DfgBuilder {
 		Assignment assignment = new Assignment(left, right);
 		Statement statement = new Statement(assignment);
 		
-		return new SubDfg(statement, statement);
+		return new SubCfg(statement, statement);
 	}
 
-	public SubDfg buildReturnSubDfg(ReturnStatement returnStatement) {
+	public SubCfg buildReturnSubCfg(ReturnStatement returnStatement) {
 		Statement statement = new Statement(returnStatement);
-		return new SubDfg(statement, statement);
+		return new SubCfg(statement, statement);
 	}
 
-	public void buildBodySubDfg(AstNode body) {
+	public void buildBodySubCfg(AstNode body) {
 		if (body instanceof Block) {
-			buildBlockSubDfg((Block) body);
+			buildBlockSubCfg((Block) body);
 		}
 	}
 	
-	public SubDfg buildVariableDeclarationSubDfg(VariableDeclaration varDecl) {
+	public SubCfg buildVariableDeclarationSubCfg(VariableDeclaration varDecl) {
 		List<VariableInitializer> variables = varDecl.getVariables();
-		SubDfg subDfg = new SubDfg();
-		SubDfg temp = null;
+		SubCfg subCfg = new SubCfg();
+		SubCfg temp = null;
 		for (VariableInitializer var: variables) {
-			temp = buildVariableInitializerSubDfg(var);
-			subDfg.append(temp);
+			temp = buildVariableInitializerSubCfg(var);
+			subCfg.append(temp);
 		}
 		
-		return subDfg;
+		return subCfg;
 	}
 	
-	public SubDfg buildVariableInitializerSubDfg(VariableInitializer varInit) {
+	public SubCfg buildVariableInitializerSubCfg(VariableInitializer varInit) {
 		if (varInit.getInitializer() != null) {
 			Statement statement = new Statement(varInit);
-			return new SubDfg(statement, statement);
+			return new SubCfg(statement, statement);
 		}
 		
-		return new SubDfg();
+		return new SubCfg();
 	}
 	
-	public SubDfg buildBlockSubDfg(Block block) {
-		SubDfg subDfg = new SubDfg();
+	public SubCfg buildBlockSubCfg(Block block) {
+		SubCfg subCfg = new SubCfg();
 		AstNode next = (AstNode) block.getFirstChild();
-		SubDfg temp = null;
+		SubCfg temp = null;
 		while (next != null) {
-			temp = buildSubDfg(next);
+			temp = buildSubCfg(next);
 			if (temp != null) {
-				subDfg.append(temp);
+				subCfg.append(temp);
 			}
 			next = (AstNode) next.getNext();
 		}
 		
-		return subDfg;
+		return subCfg;
 	}
 	
-	public SubDfg buildScopeSubDfg(Scope scope) {
-		SubDfg subDfg = new SubDfg();
+	public SubCfg buildScopeSubCfg(Scope scope) {
+		SubCfg subCfg = new SubCfg();
 		AstNode next = (AstNode) scope.getFirstChild();
-		SubDfg temp = null;
+		SubCfg temp = null;
 		while (next != null) {
-			temp = buildSubDfg(next);
+			temp = buildSubCfg(next);
 			if (temp != null) {
-				subDfg.append(temp);
+				subCfg.append(temp);
 			}
 			next = (AstNode) next.getNext();
 		}
 		
-		return subDfg;
+		return subCfg;
 	}
 	
-	public SubDfg buildIfSubDfg(IfStatement ifStatement) {
+	public SubCfg buildIfSubCfg(IfStatement ifStatement) {
 		AstNode condition = ifStatement.getCondition();
-		SubDfg trueBranch = buildSubDfg(ifStatement.getThenPart());
-		SubDfg falseBranch = buildSubDfg(ifStatement.getElsePart());
+		SubCfg trueBranch = buildSubCfg(ifStatement.getThenPart());
+		SubCfg falseBranch = buildSubCfg(ifStatement.getElsePart());
 		MergeNode mergeNode = new MergeNode();
 		
 		trueBranch.appendNode(mergeNode);
 		falseBranch.appendNode(mergeNode);
 		
-		SubDfg subDfg = buildDecisionSubDfg(condition, trueBranch, falseBranch, mergeNode);
+		SubCfg subCfg = buildDecisionSubCfg(condition, trueBranch, falseBranch, mergeNode);
 		
-		return subDfg;
+		return subCfg;
 	}
 	
-	public SubDfg buildForLoopSubDfg(ForLoop forLoop) {
-		SubDfg initializers = buildSubDfg(forLoop.getInitializer());
-		SubDfg body = buildSubDfg(forLoop.getBody());
-		SubDfg increment = buildSubDfg(forLoop.getIncrement());
-		SubDfg trueBranch = body.append(increment);
-		SubDfg falseBranch = new SubDfg();
+	public SubCfg buildForLoopSubCfg(ForLoop forLoop) {
+		SubCfg initializers = buildSubCfg(forLoop.getInitializer());
+		SubCfg body = buildSubCfg(forLoop.getBody());
+		SubCfg increment = buildSubCfg(forLoop.getIncrement());
+		SubCfg trueBranch = body.append(increment);
+		SubCfg falseBranch = new SubCfg();
 		
 		MergeNode mergeNode = new MergeNode();
 		trueBranch.appendNode(mergeNode);
 		falseBranch.appendNode(mergeNode);
 		
 		AstNode condition = forLoop.getCondition();
-		SubDfg decisionDfg = buildDecisionSubDfg(condition, trueBranch, falseBranch, mergeNode);
+		SubCfg decisionCfg = buildDecisionSubCfg(condition, trueBranch, falseBranch, mergeNode);
 		
-		SubDfg subDfg = initializers.append(decisionDfg);
+		SubCfg subCfg = initializers.append(decisionCfg);
 
-		return subDfg;
+		return subCfg;
 	}
 	
-	public SubDfg buildExpressionSubDfg(ExpressionStatement expressionStatement) {
+	public SubCfg buildExpressionSubCfg(ExpressionStatement expressionStatement) {
 		AstNode expression = expressionStatement.getExpression();
 		Statement statement = new Statement(expression);
-		SubDfg subDfg = new SubDfg(statement, statement);
+		SubCfg subCfg = new SubCfg(statement, statement);
 		
-		return subDfg;
+		return subCfg;
 	}
 	
-	public SubDfg buildDecisionSubDfg(AstNode condition, SubDfg trueBranch,
-										SubDfg falseBranch, MergeNode mergeNode) {
+	public SubCfg buildDecisionSubCfg(AstNode condition, SubCfg trueBranch,
+										SubCfg falseBranch, MergeNode mergeNode) {
 		
 		DecisionNode decisionNode = new DecisionNode(condition);
 		decisionNode.setTrueBranch(trueBranch.getBegin());
 		decisionNode.setFalseBranch(falseBranch.getBegin());
 		decisionNode.setMergeNode(mergeNode);
 		
-		return new SubDfg(decisionNode, mergeNode);
+		return new SubCfg(decisionNode, mergeNode);
 	}
 }

@@ -6,8 +6,9 @@ import org.mozilla.javascript.IRFactory;
 import org.mozilla.javascript.Node;
 import org.mozilla.javascript.ast.AstRoot;
 import org.mozilla.javascript.ast.FunctionNode;
-import trippleT.dfg.Dfg;
-import trippleT.dfg.DfgBuilder;
+
+import trippleT.cfg.Cfg;
+import trippleT.cfg.CfgBuilder;
 
 
 public class BuildDfgTest {
@@ -35,9 +36,9 @@ public class BuildDfgTest {
 		
 		if (firstNode instanceof FunctionNode) {
 			FunctionNode function = (FunctionNode) firstNode;
-			DfgBuilder builder = new DfgBuilder();
-			Dfg dfg = builder.buildDfg(function);
-			System.out.println("done");
+			CfgBuilder builder = new CfgBuilder();
+			Cfg cfg = builder.buildCfg(function);
+			cfg.print();
 		}
 	}	
 }

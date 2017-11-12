@@ -1,68 +1,32 @@
-package trippleT.dfg;
+package trippleT.cfg;
 
-public class SubDfg implements IDfg {
-	private DfgNode begin;
-	private DfgNode end;
-	
-	public SubDfg() {
-		// todo
-	}
-	
-	public SubDfg(DfgNode begin, DfgNode end) {
-		this.begin = begin;
-		this.end = end;
-	}
+public abstract class AbstractCfg {
+	protected CfgNode begin;
+	protected CfgNode end;
 	
 	/**
 	 * @return the begin
 	 */
-	public DfgNode getBegin() {
+	public CfgNode getBegin() {
 		return begin;
 	}
 	/**
 	 * @param begin the begin to set
 	 */
-	public void setBegin(DfgNode begin) {
+	public void setBegin(CfgNode begin) {
 		this.begin = begin;
 	}
 	/**
 	 * @return the end
 	 */
-	public DfgNode getEnd() {
+	public CfgNode getEnd() {
 		return end;
 	}
 	/**
 	 * @param end the end to set
 	 */
-	public void setEnd(DfgNode end) {
+	public void setEnd(CfgNode end) {
 		this.end = end;
-	}
-
-	public SubDfg append(SubDfg other) {
-		if(other.begin != null) {
-			if (begin == null) {
-				begin = other.begin;
-				end = other.end;
-			} else {
-				end.next = other.begin;
-				end = other.end;
-			}
-		}
-		
-		return this;
-	}
-	
-	public SubDfg appendNode(DfgNode node) {
-		if(node != null) {
-			if (begin == null) {
-				end = begin = node;
-			} else {
-				end.next = node;
-				end = node;
-			}
-		}
-		
-		return this;
 	}
 	
 	public void print() {
@@ -73,7 +37,7 @@ public class SubDfg implements IDfg {
 		print(begin, null);
 	}
 	
-	public void print(DfgNode node, DfgNode end) {
+	public void print(CfgNode node, CfgNode end) {
 		if (node == null || node == end) {
 			return;
 		}
