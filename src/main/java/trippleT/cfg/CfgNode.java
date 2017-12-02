@@ -128,6 +128,6 @@ public abstract class CfgNode {
 	}
 	
 	public String toString() {
-		return String.format("%s index: %d", StringGetter.toSource(astNode), index);
+		return String.format("%s index: %d, class: %s", StringGetter.toSource(astNode), index, this.astNode.getClass());
 	}
 }
