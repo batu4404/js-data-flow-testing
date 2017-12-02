@@ -1,5 +1,6 @@
 package trippleT.cfg;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,15 +26,27 @@ public class CfgBuilder {
 	private int index;
 	private DefUseStore defUseStore;
 	private Map<Integer, CfgNode> nodeMap;
+	private List<String> params;
 	
 	public Cfg buildCfg(FunctionNode function) {
 		AstNode body = function.getBody();
 		index = 0;
 		nodeMap = new HashMap<Integer, CfgNode>();
 		defUseStore = new DefUseStore();
+		List<String> params = getParams(function);
 		SubCfg subCfg = buildSubCfg(body);
-		Cfg cfg = new Cfg(subCfg, nodeMap);
+		Cfg cfg = new Cfg(subCfg, nodeMap, params);
 		return cfg;
+	}
+	
+	public List<String> getParams(FunctionNode function) {
+		List<AstNode> paramsNode = function.getParams();
+		List<String> params = new ArrayList<String>();
+		for (AstNode node: paramsNode) {
+			params.add(node.toSource());
+		}
+		
+		return params;
 	}
 	
 	public SubCfg buildSubCfg(AstNode node) {

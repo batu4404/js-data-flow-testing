@@ -7,8 +7,9 @@ import java.util.Map;
 public class Cfg extends AbstractCfg {
 	private List<List<Integer>> allPaths;
 	private Map<Integer, CfgNode> nodeMap;
+	private List<String> params;
 	
-	public Cfg(SubCfg subCfg, Map<Integer, CfgNode> nodeMap) {
+	public Cfg(SubCfg subCfg, Map<Integer, CfgNode> nodeMap, List<String> params) {
 		if (subCfg.getBegin() != null) {
 			begin = new BeginNode();
 			begin.next = subCfg.getBegin();
@@ -16,7 +17,16 @@ public class Cfg extends AbstractCfg {
 			subCfg.getEnd().setNext(end);
 			
 			this.nodeMap = nodeMap;
+			this.params = params;
 		}
+	}
+	
+	public List<String> getParams() {
+		return params;
+	}
+	
+	public Map<Integer, CfgNode> getNodeMap() {
+		return nodeMap;
 	}
 	
 	public List<List<Integer>> getAllPossiblePaths() {
