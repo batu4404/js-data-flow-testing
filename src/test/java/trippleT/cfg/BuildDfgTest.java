@@ -1,6 +1,8 @@
 package trippleT.cfg;
 
 import java.io.FileReader;
+import java.util.List;
+
 import org.mozilla.javascript.CompilerEnvirons;
 import org.mozilla.javascript.IRFactory;
 import org.mozilla.javascript.Node;
@@ -39,6 +41,9 @@ public class BuildDfgTest {
 			CfgBuilder builder = new CfgBuilder();
 			Cfg cfg = builder.buildCfg(function);
 			cfg.print();
+			
+			List<List<Integer>> allPaths = cfg.getAllPossiblePaths();
+			System.out.println(allPaths);
 		}
 	}	
 }

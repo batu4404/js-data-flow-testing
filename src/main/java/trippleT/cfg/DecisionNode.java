@@ -1,5 +1,7 @@
 package trippleT.cfg;
 
+import java.util.Map;
+
 import org.mozilla.javascript.ast.AstNode;
 
 public class DecisionNode extends CfgNode {
@@ -15,9 +17,14 @@ public class DecisionNode extends CfgNode {
 		super(astNode);
 	}
 	
-	public DecisionNode(AstNode astNode, int index) {
-		super(astNode, index);
+//	public DecisionNode(AstNode astNode, int index) {
+//		super(astNode, index);
+//	}
+	
+	public DecisionNode(AstNode astNode, int index, Map<Integer, CfgNode> nodeMap) {
+		super(astNode, index, nodeMap);
 	}
+	
 	
 	public AstNode getCondition() {
 		return astNode;
@@ -69,9 +76,4 @@ public class DecisionNode extends CfgNode {
 	public CfgNode getNext() {
 		return mergeNode;
 	}
-	
-	public String toString() {
-		return astNode.toSource();
-	}
-
 }

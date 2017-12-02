@@ -7,8 +7,6 @@
 function func1(a, b) {
 	a = 1;
 	b = 2;
-	a = 3;
-	b = 4;
 	var f = a + b;
 	if (a == b) {
 		a = b;
@@ -19,10 +17,11 @@ function func1(a, b) {
 		a = b;
 	}
 	a = a + b;
-	var c = 2, d = 3, e, f = a+b;
-	for (var i = 0; i < 10; i--) {
-		a = a;
-	}
+//	var c = 2, d = 3, e, f = a+b;
+//	for (var i = 0; i < 10; i++) {
+//		a = a + i;
+//	}
+	
 	return a;
 }
 

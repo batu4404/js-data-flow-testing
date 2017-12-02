@@ -1,8 +1,11 @@
 package trippleT.cfg;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.mozilla.javascript.ast.AstNode;
+
+import trippleT.utils.rhino.StringGetter;
 
 public abstract class CfgNode {
 	protected int index = -1;
@@ -24,6 +27,13 @@ public abstract class CfgNode {
 	public CfgNode(AstNode astNode, int index) {
 		this.astNode = astNode;
 		this.index = index;
+	}
+	
+	public CfgNode(AstNode astNode, int index, Map<Integer, CfgNode> nodeMap) {
+		this.astNode = astNode;
+		this.index = index;
+		
+		nodeMap.put(index, this);
 	}
 	
 	public CfgNode(AstNode astNode, CfgNode next, CfgNode previous) {
@@ -115,5 +125,9 @@ public abstract class CfgNode {
 	 */
 	public void setAstNode(AstNode astNode) {
 		this.astNode = astNode;
+	}
+	
+	public String toString() {
+		return String.format("%s index: %d", StringGetter.toSource(astNode), index);
 	}
 }

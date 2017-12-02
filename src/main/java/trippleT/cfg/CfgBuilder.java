@@ -1,6 +1,8 @@
 package trippleT.cfg;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.mozilla.javascript.Token;
 import org.mozilla.javascript.ast.Assignment;
@@ -20,13 +22,17 @@ import org.mozilla.javascript.ast.VariableDeclaration;
 import org.mozilla.javascript.ast.VariableInitializer;
 
 public class CfgBuilder {
-	private int index = 0;
+	private int index;
+	private DefUseStore defUseStore;
+	private Map<Integer, CfgNode> nodeMap;
 	
 	public Cfg buildCfg(FunctionNode function) {
 		AstNode body = function.getBody();
 		index = 0;
+		nodeMap = new HashMap<Integer, CfgNode>();
+		defUseStore = new DefUseStore();
 		SubCfg subCfg = buildSubCfg(body);
-		Cfg cfg = new Cfg(subCfg);
+		Cfg cfg = new Cfg(subCfg, nodeMap);
 		return cfg;
 	}
 	
@@ -67,13 +73,15 @@ public class CfgBuilder {
 			right.setOperator(Token.SUB);
 		}
 		Assignment assignment = new Assignment(left, right);
-		Statement statement = new Statement(assignment);
+		Statement statement = new Statement(assignment, index, this.nodeMap);
+		index++;
 		
 		return new SubCfg(statement, statement);
 	}
 
 	public SubCfg buildReturnSubCfg(ReturnStatement returnStatement) {
-		Statement statement = new Statement(returnStatement);
+		Statement statement = new Statement(returnStatement, index, this.nodeMap);
+		index++;
 		return new SubCfg(statement, statement);
 	}
 
@@ -97,7 +105,8 @@ public class CfgBuilder {
 	
 	public SubCfg buildVariableInitializerSubCfg(VariableInitializer varInit) {
 		if (varInit.getInitializer() != null) {
-			Statement statement = new Statement(varInit);
+			Statement statement = new Statement(varInit, index, this.nodeMap);
+			index++;
 			return new SubCfg(statement, statement);
 		}
 		
@@ -136,6 +145,8 @@ public class CfgBuilder {
 	
 	public SubCfg buildIfSubCfg(IfStatement ifStatement) {
 		AstNode condition = ifStatement.getCondition();
+		int conditionIndex = index++;
+		
 		SubCfg trueBranch = buildSubCfg(ifStatement.getThenPart());
 		SubCfg falseBranch = buildSubCfg(ifStatement.getElsePart());
 		MergeNode mergeNode = new MergeNode();
@@ -143,13 +154,15 @@ public class CfgBuilder {
 		trueBranch.appendNode(mergeNode);
 		falseBranch.appendNode(mergeNode);
 		
-		SubCfg subCfg = buildDecisionSubCfg(condition, trueBranch, falseBranch, mergeNode);
+		SubCfg subCfg = buildDecisionSubCfg(condition, trueBranch, falseBranch, mergeNode, conditionIndex);
 		
 		return subCfg;
 	}
 	
 	public SubCfg buildForLoopSubCfg(ForLoop forLoop) {
 		SubCfg initializers = buildSubCfg(forLoop.getInitializer());
+		int conditionIndex = index++;
+		
 		SubCfg body = buildSubCfg(forLoop.getBody());
 		SubCfg increment = buildSubCfg(forLoop.getIncrement());
 		SubCfg trueBranch = body.append(increment);
@@ -160,7 +173,7 @@ public class CfgBuilder {
 		falseBranch.appendNode(mergeNode);
 		
 		AstNode condition = forLoop.getCondition();
-		SubCfg decisionCfg = buildDecisionSubCfg(condition, trueBranch, falseBranch, mergeNode);
+		SubCfg decisionCfg = buildDecisionSubCfg(condition, trueBranch, falseBranch, mergeNode, conditionIndex);
 		
 		SubCfg subCfg = initializers.append(decisionCfg);
 
@@ -169,20 +182,37 @@ public class CfgBuilder {
 	
 	public SubCfg buildExpressionSubCfg(ExpressionStatement expressionStatement) {
 		AstNode expression = expressionStatement.getExpression();
-		Statement statement = new Statement(expression);
+		getDefUse(expression, index);
+		Statement statement = new Statement(expression, index, this.nodeMap);
+		index++;
 		SubCfg subCfg = new SubCfg(statement, statement);
 		
 		return subCfg;
 	}
 	
 	public SubCfg buildDecisionSubCfg(AstNode condition, SubCfg trueBranch,
-										SubCfg falseBranch, MergeNode mergeNode) {
+										SubCfg falseBranch, MergeNode mergeNode, int index) {
 		
-		DecisionNode decisionNode = new DecisionNode(condition);
+		DecisionNode decisionNode = new DecisionNode(condition, index, this.nodeMap);
 		decisionNode.setTrueBranch(trueBranch.getBegin());
 		decisionNode.setFalseBranch(falseBranch.getBegin());
 		decisionNode.setMergeNode(mergeNode);
 		
 		return new SubCfg(decisionNode, mergeNode);
+	}
+	
+	public void getDefUse(AstNode astNode, int cfgNodeIndex) {
+		if (astNode instanceof Assignment) {
+			Assignment assigment = (Assignment) astNode;
+			getDefUse(assigment.getRight(), cfgNodeIndex);
+			getDefUse(assigment.getRight(), cfgNodeIndex);
+		} else if (astNode instanceof InfixExpression) {
+			InfixExpression infix = new InfixExpression();
+			getDefUse(infix.getRight(), cfgNodeIndex);
+			getDefUse(infix.getRight(), cfgNodeIndex);
+		} else if (astNode instanceof UnaryExpression) {
+			UnaryExpression unary = (UnaryExpression) astNode;
+			getDefUse(unary.getOperand(), cfgNodeIndex);
+		}
 	}
 }
