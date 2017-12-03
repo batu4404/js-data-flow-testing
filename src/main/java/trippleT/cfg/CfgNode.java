@@ -17,7 +17,7 @@ public abstract class CfgNode {
 	protected AstNode astNode;
 	
 	public CfgNode() {
-		
+		this.astNode = null;
 	}
 	
 	public CfgNode(AstNode astNode) {

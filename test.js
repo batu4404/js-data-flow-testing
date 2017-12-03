@@ -5,16 +5,16 @@
 //}
 
 function func1(a, b) {
-	a = 1;
-	b = 2;
+	
 	var f = a + b;
+	a = f + b;
 	if (a == b) {
 		a = b;
 	} else {
 		b = a;
 	}
 	if (a == b) {
-		a = b;
+		a = b + 1;
 	}
 	a = a + b;
 //	var c = 2, d = 3, e, f = a+b;

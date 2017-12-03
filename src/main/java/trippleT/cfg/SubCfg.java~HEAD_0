@@ -1,0 +1,95 @@
+package trippleT.cfg;
+
+public class SubCfg implements ICfg {
+	private CfgNode begin;
+	private CfgNode end;
+	
+	public SubCfg() {
+		// todo
+	}
+	
+	public SubCfg(CfgNode begin, CfgNode end) {
+		this.begin = begin;
+		this.end = end;
+	}
+	
+	/**
+	 * @return the begin
+	 */
+	public CfgNode getBegin() {
+		return begin;
+	}
+	/**
+	 * @param begin the begin to set
+	 */
+	public void setBegin(CfgNode begin) {
+		this.begin = begin;
+	}
+	/**
+	 * @return the end
+	 */
+	public CfgNode getEnd() {
+		return end;
+	}
+	/**
+	 * @param end the end to set
+	 */
+	public void setEnd(CfgNode end) {
+		this.end = end;
+	}
+
+	public SubCfg append(SubCfg other) {
+		if(other.begin != null) {
+			if (begin == null) {
+				begin = other.begin;
+				end = other.end;
+			} else {
+				end.next = other.begin;
+				end = other.end;
+			}
+		}
+		
+		return this;
+	}
+	
+	public SubCfg appendNode(CfgNode node) {
+		if(node != null) {
+			if (begin == null) {
+				end = begin = node;
+			} else {
+				end.next = node;
+				end = node;
+			}
+		}
+		
+		return this;
+	}
+	
+	public void print() {
+		if (begin == null) {
+			return;
+		}
+		
+		print(begin, null);
+	}
+	
+	public void print(CfgNode node, CfgNode end) {
+		if (node == null || node == end) {
+			return;
+		}
+		
+		if (node instanceof DecisionNode) {
+			DecisionNode decision = (DecisionNode) node;
+			System.out.println("Decision Node: " + node);
+			MergeNode mergeNode = decision.getMergeNode();
+			print(decision.getTrueBranch(), mergeNode);
+			print(decision.getFalseBranch(), mergeNode);
+			print(mergeNode, end);
+		} else if (node instanceof Statement) {
+			System.out.println("statement: " + node);
+			print(node.getNext(), end);
+		} else {
+			print(node.getNext(), end);
+		}
+	}
+}

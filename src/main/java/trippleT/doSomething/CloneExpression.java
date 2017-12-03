@@ -44,6 +44,7 @@ public class CloneExpression {
 		
 		while(node != null) {
 			if (node instanceof ExpressionStatement) {
+				System.out.println(node.getClass());
 				ExpressionStatement expSt = (ExpressionStatement) node;
 				InfixExpression infix = (InfixExpression) expSt.getExpression();
 				AstNode left = infix.getLeft();
@@ -107,7 +108,8 @@ public class CloneExpression {
 		else if (node instanceof NumberLiteral) {
 			NumberLiteral numberLiteral = (NumberLiteral) node;
 			String value = numberLiteral.getValue();		
-			return new NumberLiteral(-1, value);
+			NumberLiteral number = new NumberLiteral(-1, value);
+			return number;
 		}
 		else if (node instanceof KeywordLiteral) {
 			KeywordLiteral keywordLiteral = (KeywordLiteral) node;
@@ -116,7 +118,7 @@ public class CloneExpression {
 			return clone;
 		}
 		
-		System.out.println("class: " + node.getClass());
+//		System.out.println("class: " + node.getClass());
 		
 		return null;
 	}
