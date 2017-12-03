@@ -24,7 +24,9 @@ import trippleT.cfg.CfgBuilder;
 import trippleT.doSomething.CloneExpression;
 import trippleT.doSomething.FromInfixToPrefix;
 import trippleT.doSomething.MakeSmt;
-import trippleT.doSomething.Z3Solver;
+import trippleT.solver.Z3Solver;
+import trippleT.solver.result.InputPathResult;
+import trippleT.solver.result.ResultParser;
 
 
 public class BuildDfgTest {
@@ -50,6 +52,7 @@ public class BuildDfgTest {
 		
 		Node firstNode = rootNode.getFirstChild();
 		
+		ResultParser resultParser = new ResultParser();
 		
 		if (firstNode instanceof FunctionNode) {
 			FunctionNode function = (FunctionNode) firstNode;
@@ -69,7 +72,6 @@ public class BuildDfgTest {
 					environment.put(param, name);
 				}
 				Map<Integer, CfgNode> nodeMap = cfg.getNodeMap();
-				List<CfgNode> cfgNodeList = new ArrayList<CfgNode>();
 				List<String> constraints = new ArrayList<String>();
 				for(Integer keyOfNode: currentPath) {
 					CfgNode currentNode = (keyOfNode > 0)?nodeMap.get(keyOfNode):nodeMap.get(-keyOfNode);
@@ -103,7 +105,7 @@ public class BuildDfgTest {
 						AstNode leftCondition = CloneExpression.cloneExpressionAndReplace(left, environment);
 						AstNode rightCondition = CloneExpression.cloneExpressionAndReplace(right, environment);
 						String constraint;
-						System.out.println(rightCondition.getClass());
+//						System.out.println(rightCondition.getClass());
 						
 						constraint = FromInfixToPrefix.convert(leftCondition, infix.operatorToString(infix.getOperator()), rightCondition, keyOfNode > 0) ;
 //						
@@ -112,12 +114,16 @@ public class BuildDfgTest {
 				}
 				System.out.println(constraints);
 				String filename = "path" + index++ + ".smt2";
+				System.out.println("file: " + filename);
 				MakeSmt.make(params, constraints, filename);
 				//result
 				List<String> result = Z3Solver.runZ3(filename);
-				result.forEach(System.out::println);
+				resultParser.setListParameter(params);
+				resultParser.setPath(currentPath);
+				InputPathResult inputPathResult = resultParser.generateInputPathResult(result);
+				inputPathResult.print();
 			}
-			System.out.println(allPaths);
+//			System.out.println(allPaths);
 		}
 	}	
 }

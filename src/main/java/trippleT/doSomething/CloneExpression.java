@@ -123,46 +123,46 @@ public class CloneExpression {
 		return null;
 	}
 	
-//	public static AstNode cloneExpression(AstNode node) {
-//		if (node instanceof InfixExpression) {
-//			InfixExpression infix = (InfixExpression) node;
-//			AstNode leftOperand = cloneExpression(infix.getLeft());
-//			AstNode rightOperand = cloneExpression(infix.getRight());
-//			
-//			InfixExpression cloneExpression = new InfixExpression(leftOperand, rightOperand);
-//			cloneExpression.setOperator(infix.getOperator());
-//			return cloneExpression;
-//		}
-//		else if (node instanceof UnaryExpression) {
-//			UnaryExpression unary = (UnaryExpression) node;
-//			AstNode operand = cloneExpression(unary.getOperand());
-//			
-//			UnaryExpression cloneExpression = new UnaryExpression(unary.getOperator(), -1, operand);
-//			return cloneExpression;
-//		}
-//		else if (node instanceof Name) {
-//			Name name = (Name) node;
-//			return new Name(-1, name.getString());
-//		}
-//		else if (node instanceof ParenthesizedExpression) {
-//			ParenthesizedExpression parenthesize = (ParenthesizedExpression) node;
-//			AstNode expr = cloneExpression(parenthesize.getExpression());
-//			return new ParenthesizedExpression(expr);
-//		}
-//		else if (node instanceof NumberLiteral) {
-//			NumberLiteral numberLiteral = (NumberLiteral) node;
-//			String value = numberLiteral.getValue();		
-//			return new NumberLiteral(-1, value);
-//		}
-//		else if (node instanceof KeywordLiteral) {
-//			KeywordLiteral keywordLiteral = (KeywordLiteral) node;
-//			KeywordLiteral clone = new KeywordLiteral();
-//			clone.setType(keywordLiteral.getType());
-//			return clone;
-//		}
-//		
+	public static AstNode cloneExpression(AstNode node) {
+		if (node instanceof InfixExpression) {
+			InfixExpression infix = (InfixExpression) node;
+			AstNode leftOperand = cloneExpression(infix.getLeft());
+			AstNode rightOperand = cloneExpression(infix.getRight());
+			
+			InfixExpression cloneExpression = new InfixExpression(leftOperand, rightOperand);
+			cloneExpression.setOperator(infix.getOperator());
+			return cloneExpression;
+		}
+		else if (node instanceof UnaryExpression) {
+			UnaryExpression unary = (UnaryExpression) node;
+			AstNode operand = cloneExpression(unary.getOperand());
+			
+			UnaryExpression cloneExpression = new UnaryExpression(unary.getOperator(), -1, operand);
+			return cloneExpression;
+		}
+		else if (node instanceof Name) {
+			Name name = (Name) node;
+			return new Name(-1, name.getString());
+		}
+		else if (node instanceof ParenthesizedExpression) {
+			ParenthesizedExpression parenthesize = (ParenthesizedExpression) node;
+			AstNode expr = cloneExpression(parenthesize.getExpression());
+			return new ParenthesizedExpression(expr);
+		}
+		else if (node instanceof NumberLiteral) {
+			NumberLiteral numberLiteral = (NumberLiteral) node;
+			String value = numberLiteral.getValue();		
+			return new NumberLiteral(-1, value);
+		}
+		else if (node instanceof KeywordLiteral) {
+			KeywordLiteral keywordLiteral = (KeywordLiteral) node;
+			KeywordLiteral clone = new KeywordLiteral();
+			clone.setType(keywordLiteral.getType());
+			return clone;
+		}
+		
 //		System.out.println("class: " + node.getClass());
-//		
-//		return null;
-//	}
+		
+		return null;
+	}
 }

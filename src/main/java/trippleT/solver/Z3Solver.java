@@ -1,4 +1,4 @@
-package trippleT.doSomething;
+package trippleT.solver;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,11 +17,12 @@ public class Z3Solver {
 			throws IOException {
 		List<String> result = new ArrayList<String>();
 		String s;
-  
-        System.err.println(filename);
+		
+//        System.err.println(filename);
+        String filePath = "smt/" + filename;
         if(System.getProperty("os.name").equalsIgnoreCase("Linux")) {
             try {
-            	Process p = Runtime.getRuntime().exec("z3 -smt2 -st -T:1 smt/" + filename);
+            	Process p = Runtime.getRuntime().exec("z3 -smt2 -st -T:1 " + filePath);
 //            	Process p = Runtime.getRuntime().exec("pwd");
             	
                 BufferedReader br = new BufferedReader( new InputStreamReader(p.getInputStream()));
@@ -43,7 +44,8 @@ public class Z3Solver {
         
         else {
     		String pathToZ3 = "z3\\bin\\z3.exe";
-    		ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", pathToZ3 + " -smt2 -st -T:1 " + filename);
+//    		System.out.println("filename: " + filename);
+    		ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", pathToZ3 + " -smt2 -st -T:1 " + filePath);
     		builder.redirectErrorStream(true);
     		Process p = builder.start();
     		System.err.println("p: " + p);
