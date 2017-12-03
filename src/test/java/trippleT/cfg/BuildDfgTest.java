@@ -21,12 +21,14 @@ import org.mozilla.javascript.ast.VariableInitializer;
 
 import trippleT.cfg.Cfg;
 import trippleT.cfg.CfgBuilder;
-import trippleT.doSomething.CloneExpression;
+import trippleT.cfg.CfgNode;
+import trippleT.cfg.DecisionNode;
 import trippleT.doSomething.FromInfixToPrefix;
-import trippleT.doSomething.MakeSmt;
 import trippleT.solver.Z3Solver;
 import trippleT.solver.result.InputPathResult;
 import trippleT.solver.result.ResultParser;
+import trippleT.utils.astnode.CloneExpression;
+import trippleT.utils.smt.MakeSmt;
 
 
 public class BuildDfgTest {
@@ -112,9 +114,8 @@ public class BuildDfgTest {
 						constraints.add(constraint);
 					}
 				}
-				System.out.println(constraints);
+				
 				String filename = "path" + index++ + ".smt2";
-				System.out.println("file: " + filename);
 				MakeSmt.make(params, constraints, filename);
 				//result
 				List<String> result = Z3Solver.runZ3(filename);

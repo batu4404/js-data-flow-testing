@@ -13,7 +13,7 @@ function func1(a, b) {
 	} else {
 		b = a;
 	}
-	if (a == b) {
+	if (a != b) {
 		a = b + 1;
 	}
 	a = a + b;

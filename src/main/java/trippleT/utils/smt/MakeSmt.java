@@ -1,4 +1,4 @@
-package trippleT.doSomething;
+package trippleT.utils.smt;
 
 import java.io.File;
 import java.io.IOException;

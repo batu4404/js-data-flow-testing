@@ -5,13 +5,10 @@ import java.util.List;
 public class InputPathResult {
 	public static final int POSSIBLE_PATH = 1;
 	public static final int IMPOSSIBLE_PATH = 0;
-	public static final String POSSIBLE_PATH_STR = "Possible path";
-	public static final String IMPOSSIBLE_PATH_STR = "Impossible path";
-
+	
 	private int status;
-	private List<DefineFun> parameters;
+	private List<DefineFun> inputs;
 	private List<String> errors;
-	private List<Integer> path;
 	
 	/**
 	 * @return the status
@@ -51,37 +48,23 @@ public class InputPathResult {
 	}
 
 	/**
-	 * @return the parameters
+	 * @return the inputs
 	 */
-	public List<DefineFun> getParameters() {
-		return parameters;
+	public List<DefineFun> getInputs() {
+		return inputs;
 	}
 
 	/**
-	 * @param parameters the parameters to set
+	 * @param parameters the inputs to set
 	 */
-	public void setParameters(List<DefineFun> parameters) {
-		this.parameters = parameters;
+	public void setInputs(List<DefineFun> inputs) {
+		this.inputs = inputs;
 	}
 	
-	/**
-	 * @return the path
-	 */
-	public List<Integer> getPath() {
-		return path;
-	}
-
-	/**
-	 * @param path the path to set
-	 */
-	public void setPath(List<Integer> path) {
-		this.path = path;
-	}
-	
-	public String getInput() {
+	public String getInputsStr() {
 		String result = "";
-		if (parameters != null) {
-			for (DefineFun param: parameters) {
+		if (inputs != null) {
+			for (DefineFun param: inputs) {
 				result += param.getExpression() + " ";
 			}
 		}
@@ -91,14 +74,13 @@ public class InputPathResult {
 
 	public void print() {
 		if (status == POSSIBLE_PATH) {
-			if (parameters != null) {
-				System.out.println("Input of path: " + path);
-				for (DefineFun param: parameters) {
+			if (inputs != null) {
+				for (DefineFun param: inputs) {
 					System.out.println(param);
 				}
 			}
 		} else {
-			System.out.println("Impossible path: " + path);
+			System.out.println("Impossible path");
 		}
 	}
 }

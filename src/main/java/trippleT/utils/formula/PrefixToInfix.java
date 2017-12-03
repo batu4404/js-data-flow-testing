@@ -1,4 +1,4 @@
-package trippleT.utils;
+package trippleT.utils.formula;
 
 import java.util.Stack;
 

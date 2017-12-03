@@ -1,5 +1,6 @@
 package trippleT.path;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,13 +15,25 @@ import org.mozilla.javascript.ast.VariableInitializer;
 
 import trippleT.cfg.CfgNode;
 import trippleT.cfg.DecisionNode;
-import trippleT.doSomething.CloneExpression;
-import trippleT.utils.rhino.StringGetter;
+import trippleT.solver.Z3Solver;
+import trippleT.solver.result.DefineFun;
+import trippleT.solver.result.InputPathResult;
+import trippleT.solver.result.ResultParser;
+import trippleT.utils.astnode.CloneExpression;
+import trippleT.utils.astnode.StringGetter;
+import trippleT.utils.smt.MakeSmt;
+import trippleT.utils.smt.SmtLibConvertion;
 
 public class PathExecution {
-    public void executePath(List<Integer> path, List<String> params, Map<Integer, CfgNode> nodeMap) {
-        Map<String, AstNode> environment = new HashMap<String, AstNode>();
+	private static int index = 1;
+	
+    public PathExecutionResult executePath(List<Integer> path, 
+    										List<String> params, Map<Integer, 
+    										CfgNode> nodeMap) 
+    		throws IOException {
+    	Map<String, AstNode> environment = new HashMap<String, AstNode>();
         List<AstNode> pathConstraints = new ArrayList<AstNode>();
+        List<AstNode> pathConstraintsOrigin = new ArrayList<AstNode>();
         
         addParamsToEnvironment(params, environment);
         
@@ -31,24 +44,50 @@ public class PathExecution {
                 DecisionNode decision = (DecisionNode) cfgNode;
                 AstNode condition = null;
                 if (nodeIndex < 0) {
-                    condition = negativeCondition(decision.getCondition(), environment);
+                    condition = negativeCondition(decision.getCondition());
                 } else {
-                    condition = CloneExpression.cloneExpressionAndReplace(decision.getCondition(), environment);
+                	condition = decision.getCondition();
                 }
                 
+                pathConstraintsOrigin.add(condition);
+                
+                condition = CloneExpression.cloneExpressionAndReplace(condition, environment);
                 pathConstraints.add(condition);
             } else {
                 putVariable(cfgNode.getAstNode(), environment);
             }
         }
         
-        for (AstNode constraint : pathConstraints) {
-            System.out.println("constraint: " + StringGetter.toSource(constraint));
-        }
+        ResultParser resultParser = new ResultParser();
+		String filename = "path_" + (index++) + ".smt2";
+		List<String> pathConstraintsStrList = SmtLibConvertion.convert(pathConstraints); 
+		
+		MakeSmt.make(params, pathConstraintsStrList, filename);
+		//result
+		List<String> result = Z3Solver.runZ3(filename);
+		resultParser.setListParameter(params);
+		resultParser.setPath(path);
+		InputPathResult inputPathResult = resultParser.generateInputPathResult(result);
+		
+		List<String> pathContraintsOriginStr = StringGetter.toSource(pathConstraintsOrigin);
+		
+		PathExecutionResult pathExecutionResult = 
+				new PathExecutionResult(path, pathContraintsOriginStr, inputPathResult);
+		
+		return pathExecutionResult;
     }
     
     public AstNode negativeCondition(AstNode node, Map<String, AstNode> environment) {
         AstNode clone = CloneExpression.cloneExpressionAndReplace(node, environment);
+        UnaryExpression unary = new UnaryExpression();
+        unary.setOperand(clone);
+        unary.setOperator(Token.NOT);
+        
+        return unary;
+    }
+    
+    public AstNode negativeCondition(AstNode node) {
+        AstNode clone = CloneExpression.cloneExpression(node);
         UnaryExpression unary = new UnaryExpression();
         unary.setOperand(clone);
         unary.setOperator(Token.NOT);
@@ -78,14 +117,8 @@ public class PathExecution {
     public void addParamsToEnvironment(List<String> params, Map<String, AstNode> environment) {
         for (String param : params) {
             Name var = new Name();
-            var.setString(param + "_S");
+            var.setString(param + "_s");
             environment.put(param, var);
-        }
-        
-        for (Map.Entry<String, AstNode> entry : environment.entrySet())
-        {
-            System.out.println("key: " + entry.getKey());
-                System.out.println("value: " + StringGetter.toSource(entry.getValue()));
         }
     }
 }

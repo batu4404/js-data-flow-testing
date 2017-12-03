@@ -1,4 +1,7 @@
-package trippleT.utils.rhino;
+package trippleT.utils.astnode;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.mozilla.javascript.ast.Assignment;
 import org.mozilla.javascript.ast.AstNode;
@@ -7,6 +10,15 @@ import org.mozilla.javascript.ast.UnaryExpression;
 import org.mozilla.javascript.ast.VariableInitializer;
 
 public class StringGetter {
+	public static List<String> toSource(List<AstNode> nodeList) {
+		List<String> sourceList = new ArrayList<>();
+		for (AstNode node : nodeList) {
+			sourceList.add(toSource(node));
+		}
+		
+		return sourceList;
+	}
+	
 	public static String toSource(AstNode node) {
 		if (node instanceof Assignment) {
 			Assignment assignment = (Assignment) node;

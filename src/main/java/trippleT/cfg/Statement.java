@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.mozilla.javascript.ast.AstNode;
 
-import trippleT.utils.rhino.StringGetter;
+import trippleT.utils.astnode.StringGetter;
 
 public class Statement extends CfgNode {
 	public Statement() {
