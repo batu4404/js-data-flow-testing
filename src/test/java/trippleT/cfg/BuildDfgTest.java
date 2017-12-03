@@ -22,6 +22,9 @@ import org.mozilla.javascript.ast.VariableInitializer;
 import trippleT.cfg.Cfg;
 import trippleT.cfg.CfgBuilder;
 import trippleT.doSomething.CloneExpression;
+import trippleT.doSomething.FromInfixToPrefix;
+import trippleT.doSomething.MakeSmt;
+import trippleT.doSomething.Z3Solver;
 
 
 public class BuildDfgTest {
@@ -58,6 +61,7 @@ public class BuildDfgTest {
 		
 			
 			List<List<Integer>> allPaths = cfg.getAllPossiblePaths();
+			int index = 1;
 			for (List<Integer> currentPath: allPaths) {
 				Map<String, AstNode> environment = new HashMap<String, AstNode>();
 				for (String param: params) {
@@ -70,25 +74,12 @@ public class BuildDfgTest {
 				for(Integer keyOfNode: currentPath) {
 					CfgNode currentNode = (keyOfNode > 0)?nodeMap.get(keyOfNode):nodeMap.get(-keyOfNode);
 					if (currentNode.getAstNode() instanceof Assignment) {
-						
-//						
-//						Assignment expSt = (Assigntment) currentNode.getAstNode();
 						InfixExpression infix = (InfixExpression) currentNode.getAstNode();
 						AstNode left = infix.getLeft();
 						AstNode right = infix.getRight();
-//						System.out.println(environment.get("a").getString());
-//						System.out.println(right.toSource() + " " + right.getClass());
+					
 						AstNode clone = CloneExpression.cloneExpressionAndReplace(right, environment);
 						environment.put(left.getString(), clone);
-//						if (clone instanceof NumberLiteral) {
-//							NumberLiteral number = (NumberLiteral) clone;
-//							System.out.println(left.getString() + " " + number.getValue());
-//						} else if (clone instanceof InfixExpression) {
-//							System.out.println(left.getString() + " " + clone.toSource());
-//						}
-//						else {
-//							System.out.println("clone " + clone.getString());
-//						}
 						
 					} else if (currentNode.getAstNode() instanceof VariableInitializer) {
 						VariableInitializer vi = (VariableInitializer) currentNode.getAstNode();
@@ -112,15 +103,19 @@ public class BuildDfgTest {
 						AstNode leftCondition = CloneExpression.cloneExpressionAndReplace(left, environment);
 						AstNode rightCondition = CloneExpression.cloneExpressionAndReplace(right, environment);
 						String constraint;
-						if (keyOfNode > 0) {
-							constraint = leftCondition.toSource() + infix.operatorToString(infix.getOperator()) + rightCondition.toSource();
-						} else {
-							constraint = "!(" + leftCondition.toSource() + infix.operatorToString(infix.getOperator()) + rightCondition.toSource() + ")";
-						}
+						System.out.println(rightCondition.getClass());
+						
+						constraint = FromInfixToPrefix.convert(leftCondition, infix.operatorToString(infix.getOperator()), rightCondition, keyOfNode > 0) ;
+//						
 						constraints.add(constraint);
 					}
 				}
 				System.out.println(constraints);
+				String filename = "path" + index++ + ".smt2";
+				MakeSmt.make(params, constraints, filename);
+				//result
+				List<String> result = Z3Solver.runZ3(filename);
+				result.forEach(System.out::println);
 			}
 			System.out.println(allPaths);
 		}
