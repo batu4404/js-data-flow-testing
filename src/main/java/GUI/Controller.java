@@ -58,7 +58,7 @@ public class Controller implements Initializable {
 	@FXML
 	private AnchorPane sourceOrCfgPane;
 	
-	
+	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		choiceBoxTarget.setItems(targets);
 		choiceBoxTarget.setValue(targets.get(0));
