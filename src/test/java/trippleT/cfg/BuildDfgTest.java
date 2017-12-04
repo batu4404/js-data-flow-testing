@@ -19,6 +19,7 @@ import org.mozilla.javascript.ast.Name;
 import org.mozilla.javascript.ast.NumberLiteral;
 import org.mozilla.javascript.ast.VariableInitializer;
 
+import trippleT.DFTesting.AllDefs;
 import trippleT.cfg.Cfg;
 import trippleT.cfg.CfgBuilder;
 import trippleT.cfg.CfgNode;
@@ -63,11 +64,13 @@ public class BuildDfgTest {
 //			cfg.print();
 			
 			List<String> params = cfg.getParams();
-		
+			
+			//all defs theo bien a
+			
 			
 			List<List<Integer>> allPaths = cfg.getAllPossiblePaths();
 			int index = 1;
-			for (List<Integer> currentPath: allPaths) {
+			for (List<Integer> currentPath: AllDefs.getPathsWithAllDefs(cfg, allPaths, params.get(0))) {
 				Map<String, AstNode> environment = new HashMap<String, AstNode>();
 				for (String param: params) {
 					Name name = new Name(0, param+"_s");
@@ -78,6 +81,7 @@ public class BuildDfgTest {
 				for(Integer keyOfNode: currentPath) {
 					CfgNode currentNode = (keyOfNode > 0)?nodeMap.get(keyOfNode):nodeMap.get(-keyOfNode);
 					if (currentNode.getAstNode() instanceof Assignment) {
+						
 						InfixExpression infix = (InfixExpression) currentNode.getAstNode();
 						AstNode left = infix.getLeft();
 						AstNode right = infix.getRight();
@@ -89,6 +93,7 @@ public class BuildDfgTest {
 						VariableInitializer vi = (VariableInitializer) currentNode.getAstNode();
 						AstNode right = vi.getInitializer();
 						AstNode left = vi.getTarget();
+						
 						AstNode clone = CloneExpression.cloneExpressionAndReplace(right, environment);
 						environment.put(left.getString(), clone);
 //						if (clone instanceof NumberLiteral) {
@@ -122,9 +127,10 @@ public class BuildDfgTest {
 				resultParser.setListParameter(params);
 				resultParser.setPath(currentPath);
 				InputPathResult inputPathResult = resultParser.generateInputPathResult(result);
+				System.out.println(currentPath);
 				inputPathResult.print();
 			}
-//			System.out.println(allPaths);
+			System.out.println(allPaths);
 		}
 	}	
 }
